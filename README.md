@@ -1,2 +1,0 @@
-# CIS233Y
-CIS233Y at pcc
