@@ -33,14 +33,14 @@ def input_numeric(prompt="Enter value: ", error="Invalid Input. Please try again
 
 def input_int(prompt="Please enter a whole number: ", error="Invalid input. Please enter a whole number.", **kwargs):
     error = str(error) + " ❌ "
-    return input_numeric(prompt, error=error, is_float=False, **kwargs)
+    return input_numeric(prompt, error=error, **kwargs)
 
 
 def input_float(prompt="Please enter a decimal number. "
                        "Note, if a range is not provided the default range is 0.0 to 100.0: ",
                 error="Invalid input. Please enter a valid decimal number.", **kwargs):
     error = str(error) + " ❌ "
-    return input_numeric(prompt, error=error, is_float=True, **kwargs)
+    return input_numeric(prompt, error=error, **kwargs)
 
 
 def input_string(prompt="Please enter your item name: ", error="Invalid input. Please enter valid text.", valid=None):

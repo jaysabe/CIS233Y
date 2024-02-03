@@ -4,10 +4,10 @@ from input_validation import select_item as select_type
 
 
 class TwoFactorAuth(Account):
-    def __init__(self, website_name, website_url, username, password, two_factor_value, account_type=True):
-        super().__init__(website_name, website_url, username, password)
-        self.two_factor_value = two_factor_value
-        self.account_type = account_type
+    def __init__(self, website_name=None, url=None, username=None, password=None, _type=True):
+        super().__init__(website_name, url, username, type, password)
+        self.account_type = type
+        # self.value
 
     @classmethod
     def set_two_factor_type(cls):

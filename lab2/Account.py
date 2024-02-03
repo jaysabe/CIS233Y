@@ -5,10 +5,11 @@ from datetime import datetime
 
 
 class Account:
-    def __init__(self, website_name, url, username, password=None):
+    def __init__(self, website_name=None, url=None, username=None, _type=None, password=None):
         self._website_name = website_name
         self._url = url
         self._username = username
+        self._type = _type
         self._password = password if password else self.generate_password
         self._last_password_change_date = datetime.now()
 

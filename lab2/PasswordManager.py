@@ -1,7 +1,7 @@
 # defines password manager
 from input_validation import input_int, input_string, y_or_n as type_chk
 from Account import Account as acc
-
+from TwoFactorAccount import TwoFactorAuth as factor_auth
 
 class PasswordManager:
     def __init__(self):
@@ -30,13 +30,14 @@ class PasswordManager:
         _type = type_chk(prompt="Does your account have two-factor authentication enabled (yes/no)? ",
                          error="Invalid input", ge='yes', gt='y', le='no', lt='n')
 
-        if _password == "":
-            account = acc(website_name=_website_name, url=_website_url, username=_username, type=_type)
+        if _password == "" or not _type:
+            account = acc(website_name=_website_name, url=_website_url, username=_username, _type=_type)
+            self.accounts.append(account)
         else:
-            account = acc(website_name=_website_name, url=_website_url, username=_username, password=_password,
-                          type=_type)
+            two_auth_account = factor_auth(website_name=_website_name, url=_website_url, username=_username,
+                                           password=_password, _type=_type)
+            self.accounts.append(two_auth_account)
 
-        self.accounts.append(account)
         print("Account added successfully!")
 
     def view_account_list(self):
