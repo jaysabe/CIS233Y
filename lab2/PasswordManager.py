@@ -3,9 +3,11 @@ from input_validation import input_int, input_string, y_or_n as type_chk
 from Account import Account as acc
 from TwoFactorAccount import TwoFactorAuth as factor_auth
 
+
 class PasswordManager:
     def __init__(self):
         self.accounts = []
+        self.two_auth_accounts = factor_auth()
 
     @staticmethod
     def display_menu():
@@ -41,11 +43,11 @@ class PasswordManager:
         print("Account added successfully!")
 
     def view_account_list(self):
-        if not self.accounts:
-            print("No accounts present to display.")
-        else:
+        if self.accounts:
             for i, account in enumerate(self.accounts, start=1):
                 print(f"\nAccount {i}:\n{account}")
+        else:
+            print("No accounts present to display.")
 
     def change_password(self):
         self.view_account_list()

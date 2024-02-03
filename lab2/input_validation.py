@@ -4,6 +4,7 @@
 def input_numeric(prompt="Enter value: ", error="Invalid Input. Please try again.", is_float=False, gt=None, ge=None,
                   lt=None, le=None):
     fail = " ❌ "
+    print(f"ge: {ge}, le: {le}")  # Print values for debugging
     while True:
         try:
             user_input = float(input(prompt)) if is_float else int(input(prompt))
@@ -12,16 +13,16 @@ def input_numeric(prompt="Enter value: ", error="Invalid Input. Please try again
                 # If all optionals are None, prompt the user until a valid value is provided
                 return user_input
 
-            if gt is not None and user_input <= gt:
+            if gt is not None and user_input < gt:
                 print(f"Value must be greater than {gt}!{fail}")
 
-            if ge is not None and user_input < ge:
+            if ge is not None and user_input <= ge:
                 print(f"Value must be greater than or equal to {ge}{fail}!")
 
-            if lt is not None and user_input >= lt:
+            if lt is not None and user_input > lt:
                 print(f"Value must be less than {lt}!{fail}")
 
-            if le is not None and user_input > le:
+            if le is not None and user_input >= le:
                 print(f"Value must be less than or equal to {le}!{fail}")
 
             return user_input
