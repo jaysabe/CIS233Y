@@ -1,30 +1,54 @@
 # defines password manager
-from input_validation import input_int, input_string, y_or_n as type_chk
+from input_validation import select_item, input_string, y_or_n as type_chk
 from Account import Account as acc
 from TwoFactorAccount import TwoFactorAuth as factor_auth
 
 
 class PasswordManager:
-    def __init__(self):
-        self.accounts = []
-        self.two_auth_accounts = factor_auth()
+    __all_accounts = None
+
+    CHOICE = ["a", "v", "c", "d", "q"]
 
     @staticmethod
     def display_menu():
+        print()
         print("Password Manager Menu:")
-        print("1. Add Account")
-        print("2. View Accounts")
-        print("3. Change Password")
-        print("4. Exit <== Program in prog. can only exit")
+        print("a: Add Account")
+        print("v: View List of Accounts")
+        print("c: Change Password")
+        print("d: Delete Account")
+        print("q: Exit <== Program in prog. can only exit")
         print("--------------------")
 
-    def run(self):
-        while True:
-            self.display_menu()
-            c = input_int(prompt="Enter choice (1-4): ", error="Invalid inputs.", is_float=False, le=1, ge=4)
-            self.input_choice(self, c)
+    @classmethod
+    def init(cls):
+        # cls.__all_accounts = Account.read_data()
+        pass
 
-    def add_account(self):
+    @classmethod
+    def run(cls):
+        while True:
+            cls.display_menu()
+            choice = select_item(prompt="Please select an option:: ", error="Please select only one of the items above!", choices=cls.CHOICES)
+
+            match choice:
+                case "q":
+                    break
+                case "a":
+                    cls.add_account()
+                case "v":
+                    cls.view_account_list()
+                case "c":
+                    cls.change_password()
+                case "d":
+                    cls.delete_account()
+
+    @classmethod
+    def delete_account(cls):
+        pass
+
+    @classmethod
+    def add_account(cls):
         _website_name = input_string("Enter website name: ")
         _website_url = input_string("Enter website URL: ")
         _username = input_string("Enter username: ")
@@ -32,18 +56,21 @@ class PasswordManager:
         _type = type_chk(prompt="Does your account have two-factor authentication enabled (yes/no)? ",
                          error="Invalid input", ge='yes', gt='y', le='no', lt='n')
 
+        if _type:
+            #
         if _password == "" or not _type:
             account = acc(website_name=_website_name, url=_website_url, username=_username, _type=_type)
-            self.accounts.append(account)
+            cls.accounts.append(account)
         else:
             two_auth_account = factor_auth(website_name=_website_name, url=_website_url, username=_username,
-                                           password=_password, _type=_type)
-            self.accounts.append(two_auth_account)
+                                           password=_password)
+            cls.accounts.append(two_auth_account)
 
         print("Account added successfully!")
 
-    def view_account_list(self):
-        if self.accounts:
+    @classmethod
+    def view_account_list(cls):
+        if cls.accounts:
             for i, account in enumerate(self.accounts, start=1):
                 print(f"\nAccount {i}:\n{account}")
         else:
@@ -65,20 +92,5 @@ class PasswordManager:
             else:
                 print("Invalid account number.")
 
-    @staticmethod
-    def input_choice(self, c):
-        # if c == 1:
-        #     # Add Account
-        #     self.add_account()
-        # if c == 2:
-        #     # Check Account
-        #     self.view_account_list()
-        # if c == 3:
-        #     # Change password
-        #     self.change_password()
-        if c == 4:
-            # Exit Program
-            print("Exiting Password Manager.")
-            exit(0)
 
 
