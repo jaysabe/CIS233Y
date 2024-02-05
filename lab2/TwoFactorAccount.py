@@ -7,11 +7,10 @@ class TwoFactorAuth(Account):
     __account_type = ""
     __two_factor_val = ""
 
-    def __init__(self, website_name, url, username, password, two_factor_val, _type=True):
-        super().__init__(website_name, url, username, _type, password)
+    def __init__(self, name, url, username, password, two_factor_val, _type=True):
+        super().__init__(name, url, username, password, _type)
         self.account_type = _type
         self.__two_factor_val = two_factor_val
-
 
     @classmethod
     def set_two_factor_type(cls):
@@ -27,5 +26,5 @@ class TwoFactorAuth(Account):
     def __str__(self):
         # Include two-factor information in the string representation
         parent_str = super().__str__()
-        return f"{parent_str}\nTwo-Factor Type: {self.account_type}\nTwo-Factor Value: {self.two_factor_val}"
+        return f"{parent_str}\nTwo-Factor Type: {self.__account_type}\nTwo-Factor Value: {self.__two_factor_val}"
 

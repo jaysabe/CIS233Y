@@ -7,7 +7,7 @@ from TwoFactorAccount import TwoFactorAuth as factor_auth
 class PasswordManager:
     __all_accounts = None
 
-    CHOICE = ["a", "v", "c", "d", "q"]
+    CHOICES = ["a", "v", "c", "d", "q"]
 
     @staticmethod
     def display_menu():
@@ -29,19 +29,23 @@ class PasswordManager:
     def run(cls):
         while True:
             cls.display_menu()
-            choice = select_item(prompt="Please select an option:: ", error="Please select only one of the items above!", choices=cls.CHOICES)
+            choice = select_item(prompt="Please select an option: ", error="Please select only one of the items above!", choices=cls.CHOICES)
 
             match choice:
                 case "q":
                     break
                 case "a":
-                    cls.add_account()
+                    pass
+                    # cls.add_account()
                 case "v":
-                    cls.view_account_list()
+                    pass
+                    # cls.view_account_list()
                 case "c":
-                    cls.change_password()
+                    pass
+                    # cls.change_password()
                 case "d":
-                    cls.delete_account()
+                    pass
+                    # cls.delete_account()
 
     @classmethod
     def delete_account(cls):
@@ -56,41 +60,49 @@ class PasswordManager:
         _type = type_chk(prompt="Does your account have two-factor authentication enabled (yes/no)? ",
                          error="Invalid input", ge='yes', gt='y', le='no', lt='n')
 
-        if _type:
-            #
         if _password == "" or not _type:
-            account = acc(website_name=_website_name, url=_website_url, username=_username, _type=_type)
-            cls.accounts.append(account)
+            account = acc(name=_website_name, url=_website_url, username=_username, _type=_type)
+            cls.__all_accounts.append(account)
         else:
-            two_auth_account = factor_auth(website_name=_website_name, url=_website_url, username=_username,
+            two_auth_account = factor_auth(name=_website_name, url=_website_url, username=_username,
                                            password=_password)
-            cls.accounts.append(two_auth_account)
+            cls.__all_accounts.append(two_auth_account)
 
         print("Account added successfully!")
 
     @classmethod
     def view_account_list(cls):
-        if cls.accounts:
-            for i, account in enumerate(self.accounts, start=1):
-                print(f"\nAccount {i}:\n{account}")
-        else:
-            print("No accounts present to display.")
+        for account in cls.__all_accounts:
+            print(account.get_name())
 
-    def change_password(self):
-        self.view_account_list()
+    @classmethod
+    def select_account(cls):
+        # cls.view_account_list()
+        names = [account.get_name() for account in cls.__all_accounts] + ["exit"]
+        prompt_str = "Current List of Accounts: "
+        for name in names:
+            prompt_str += "\n\t" + name
+        prompt_str += "\nPlease select an account to change: "
 
-        if not self.accounts:
-            print("No accounts to change password")
-        else:
-            account_index = input_int(prompt="Enter choice (1-4): ", error="Invalid inputs.", is_float=False, le=1,
-                                      ge=4)-1
+        selected_val = select_item(prompt=prompt_str, error="Please select only an account from this list!",
+                                   choices=names)
+        if selected_val == "exit":
+            return None
 
-            if 0 <= account_index < len(self.accounts):
-                new_password = input_string(prompt="Enter the new password: ")
-                self.accounts[account_index].change_password(new_password)
-                print("Password changed successfully!")
-            else:
-                print("Invalid account number.")
+        print("Selected:", selected_val)
 
+
+    @classmethod
+    def change_password(cls, selected_val):
+        temp = type_chk(prompt="Continue to permanently change your password (y/n)?", error="Invalid symbols. please try again.")
+        if not temp:
+            return
+
+        selected_account = acc.search(selected_val)
+        new_password = input_string(prompt="Enter the new password: ")
+        cls.accounts[selected_account].change_password(new_password)
+
+        print("Password changed successfully!")
+        return selected_account
 
 
