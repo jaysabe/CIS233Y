@@ -1,11 +1,12 @@
 # defines password manager
-from input_validation import select_item, input_string, y_or_n as type_chk
-from Account import Account as acc
-from TwoFactorAccount import TwoFactorAuth as factor_auth
+from ui.input_validation import select_item, input_string, y_or_n as type_chk
+from logic.Account import Account as acc
+from logic.TwoFactorAccount import TwoFactorAuth as factor_auth
 
 
 class PasswordManager:
     __all_accounts = None
+    __all_two_fact_accounts = None
 
     CHOICES = ["a", "v", "c", "d", "q"]
 
@@ -17,12 +18,12 @@ class PasswordManager:
         print("v: View List of Accounts")
         print("c: Change Password")
         print("d: Delete Account")
-        print("q: Exit <== Program in prog. can only exit")
+        print("q: Exit the program.")
         print("--------------------")
 
     @classmethod
     def init(cls):
-        # cls.__all_accounts = Account.read_data()
+        # cls.__all_accounts, cls.__two_fact_accounts = Account.read_data()
         pass
 
     @classmethod
@@ -46,6 +47,7 @@ class PasswordManager:
                 case "d":
                     pass
                     # cls.delete_account()
+        print("Entering sleep...")
 
     @classmethod
     def delete_account(cls):

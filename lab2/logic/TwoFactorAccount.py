@@ -1,16 +1,13 @@
 # define TwoFactorAccount
-from Account import Account
-from input_validation import select_item as select_type
+from logic.Account import Account
+from ui.input_validation import select_item as select_type
 
 
 class TwoFactorAuth(Account):
-    __account_type = ""
-    __two_factor_val = ""
-
-    def __init__(self, name, url, username, password, two_factor_val, _type=True):
-        super().__init__(name, url, username, password, _type)
-        self.account_type = _type
-        self.__two_factor_val = two_factor_val
+    def __init__(self, name, url, username, password, _type, _info, last_password_change_date=None):
+        super().__init__(name, url, username, password, _type, _info, last_password_change_date)
+        self.__account_type = _type
+        self.__two_factor_val = _info
 
     @classmethod
     def set_two_factor_type(cls):
