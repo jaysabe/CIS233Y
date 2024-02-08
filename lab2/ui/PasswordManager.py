@@ -150,29 +150,68 @@ class PasswordManager:
             _password = input_string("Enter password for the account: ")
             if two_factor_auth:
                 selected_val = select_item("Enter authentication method (phone, pin, or secret question): ", map=TwoFactorAuth.AUTH, choices=TwoFactorAuth.AUTH_VAL)
-                TwoFactorAuth.choice_mapping(selected_val)
+                _2fa_type = TwoFactorAuth.choice_mapping(selected_val)
 
                 # Create account with 2FA logic
-                TwoFactorAuth(name, _url, _username, _password, _info=selected_val, last_changed=datetime.now())
+                TwoFactorAuth(name, _url, _username, _password, _type=_2fa_type, _info=selected_val, last_changed=datetime.now())
             else:
                 # Create account logic
                 Account(name, _url, _username, _password, last_changed=datetime.now())
         except KeyError:
-            print("An error occurred while searching for the account.")
+            print(f"An error occurred while searching for the account.")
 
-# _________________________________________________________________________________
     @classmethod
-    def change_password(cls, selected_val):
-        temp = y_or_n("Continue to permanently change your password (y/n)?")
-        if not temp:
+    def insert(cls):
+        the_list = cls.select_list_genre()
+        if the_list is None:
+            return
+        account = cls.select_account()
+        if account is None:
+            return
+        if account in the_list:
+            print(f"Account connected to {account.get_url()} is already in List {the_list.get_name()}!")
+
+
+    @classmethod
+    def remove_acc_from_list(cls):
+        the_list = cls.select_list_genre()
+        if the_list is None:
+            return
+        if the_list.get_name() == AccountList.ALL_ACCOUNTS:
+            print("You can't remove an account from All Accounts!")
+            return
+        account = cls.select_account(the_list)
+        if account is None:
+            return
+        if account not in the_list:
+            print(f"Account connected to {account.get_url()} is not in the List {the_list.get_title()}")
+            return
+        the_list.remove(account)
+
+    @classmethod
+    def change_password(cls):
+        
+
+    @classmethod
+    def join_lists(cls):
+        list1 = cls.select_list_genre()
+        list2 = cls.select_list_genre()
+        if list1 or list2 is None:
             return
 
-        selected_account = Account.search(selected_val)
-        new_password = input_string(prompt="Enter the new password: ")
-        cls.accounts[selected_account].change_password(new_password)
+        try:
+            new_list = list1 + list2
+        except Exception as e:
+            print(e)
+            return
 
-        print("Password changed successfully!")
-        return selected_account
+        cls.__all_lists.append(new_list)
+
+
+
+
+# _________________________________________________________________________________
+
 
     @classmethod
     def run(cls):

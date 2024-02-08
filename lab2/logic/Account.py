@@ -24,7 +24,7 @@ class Account:
         return self.__login_url
 
     def change_password(self, new_password):
-        self.password = new_password
+        self.__password = new_password
         self.__last_changed = str(datetime.now())
 
     def __str__(self):

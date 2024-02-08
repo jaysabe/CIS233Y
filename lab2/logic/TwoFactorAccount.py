@@ -19,9 +19,12 @@ class TwoFactorAuth(Account):
 
     @staticmethod
     def choice_mapping(_2fa_code_value):
+        _2fa_code = ""
         if _2fa_code_value == "phone":
             _2fa_code = input_string("Enter phone verification code: ")
         elif _2fa_code_value == "pin":
             _2fa_code = input_string("Enter PIN: ")
         elif _2fa_code_value == "secret question":
             _2fa_code = input_string("What is the name of your first pet: ")
+
+        return _2fa_code
