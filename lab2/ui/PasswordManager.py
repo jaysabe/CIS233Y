@@ -171,7 +171,6 @@ class PasswordManager:
         if account in the_list:
             print(f"Account connected to {account.get_url()} is already in List {the_list.get_name()}!")
 
-
     @classmethod
     def remove_acc_from_list(cls):
         the_list = cls.select_list_genre()
@@ -196,7 +195,7 @@ class PasswordManager:
             return
 
         new_password = input_string("Enter the new password: ")
-        account.change_password(new_password) 
+        account.change_password(new_password)
 
     @classmethod
     def join_lists(cls):
@@ -204,20 +203,12 @@ class PasswordManager:
         list2 = cls.select_list_genre()
         if list1 or list2 is None:
             return
-
         try:
             new_list = list1 + list2
         except Exception as e:
             print(e)
             return
-
         cls.__all_lists.append(new_list)
-
-
-
-
-# _________________________________________________________________________________
-
 
     @classmethod
     def run(cls):
@@ -229,33 +220,24 @@ class PasswordManager:
                 case "q":
                     break
                 case "p":
-                    pass
-                    # cls.print_accounts()
+                    cls.print_accounts()
                 case "l":
-                    pass
-                    # cls.view_account_list()
+                    cls.print_lists()
                 case "s":
-                    pass
-                    # cls.print_selected_list()
+                    cls.print_selected_list()
                 case "a":
-                    pass
-                    # cls.new_list()
+                    cls.new_list()
                 case "d":
-                    pass
-                    # cls.delete_list()
+                    cls.delete_list()
                 case "m":
-                    pass
-                    # cls.new_account()
+                    cls.new_account()
                 case "i":
-                    pass
-                    # cls.insert()
+                    cls.insert()
                 case "r":
-                    pass
-                    # cls.remove_acc_from_list()
+                    cls.remove_acc_from_list()
                 case "u":
-                    pass
-                    # cls.update_security()
+                    cls.change_password()
                 case "j":
-                    pass
-                    # cls.join_lists()
+                    cls.join_lists()
+
         print("Entering sleep...")
