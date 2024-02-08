@@ -24,7 +24,7 @@ class PasswordManager:
         print("  m: Make a new account.")
         print("  i: Insert account into category.")
         print("  r: Remove an account from a category.")
-        print("  u: Update the security level for an account.")
+        print("  u: Update password for an account.")
         print("  j: Join two account lists together.")
         print("  q: Exit the program.")
         print("--------------------")
@@ -190,7 +190,13 @@ class PasswordManager:
 
     @classmethod
     def change_password(cls):
-        
+        # Select the account to then prompt password change
+        account = cls.select_account()
+        if account is None:
+            return
+
+        new_password = input_string("Enter the new password: ")
+        account.change_password(new_password) 
 
     @classmethod
     def join_lists(cls):
