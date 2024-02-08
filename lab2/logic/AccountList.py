@@ -2,7 +2,7 @@ class AccountList:
     __title = ""
     __security_lvl = ""
     __map = {}
-    # ALL_TITLES = "All Account List Titles"
+    ALL_ACCOUNTS = "All Accounts"
     
     def __init__(self, title, security_level, accounts):
         self.__name = title

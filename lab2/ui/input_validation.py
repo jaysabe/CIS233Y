@@ -1,4 +1,5 @@
 # validate input functions here
+from logic.Account import Account
 
 def valid_pin_number(n):
     return len(n) == 4 and n[0:3].isdigit()
@@ -55,8 +56,7 @@ def input_string(prompt="Please enter your item name: ", error="Invalid input. P
             print(error)
 
 
-def y_or_n(prompt="Please answer with yes or no: ", error="Invalid input. Please answer with yes or no.",
-           ge=None, gt=None, le=None, lt=None):
+def y_or_n(prompt="Please answer with yes or no: ", error="Invalid input. Please answer with yes or no."):
     while True:
         user_input = input(prompt).strip().lower()
         if user_input in ["y", "yee", "yea", "yes"]:
@@ -99,6 +99,18 @@ def input_val(_type="int", *args, **kwargs):
         return select_item(*args, **kwargs)
     else:
         print("Type was not properly set", _type)
+
+
+def check_site_exist(name):
+    try:
+        site = Account.search(name)
+        if site is not None:
+            print(f"Site {name} already exists!")
+            return True
+        else:
+            return False
+    except KeyError:
+        pass
 
 
 #  * = packs any num of positional args

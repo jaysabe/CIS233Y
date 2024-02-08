@@ -1,8 +1,9 @@
 # defines password manager
-from ui.input_validation import select_item, input_string, y_or_n
+from ui.input_validation import input_int, select_item, input_string, y_or_n, check_site_exist
 from logic.Account import Account
 from logic.TwoFactorAccount import TwoFactorAuth
 from logic.AccountList import AccountList
+from datetime import datetime
 
 
 class PasswordManager:
@@ -67,11 +68,11 @@ class PasswordManager:
         for url in urls:
             prompt_str += "\n\t" + url
         prompt_str += "\nPlease select an item from the list: "
-        selected = select_item(prompt=prompt_string, error="Please select an item from the list!", choices=urls)
+        selected = select_item(prompt=prompt_str, error="Please select an item from the list!", choices=urls)
         if selected == "exit":
             return None
         print("Selected:", selected)
-        selected_acc = Account.lookup(selected)
+        selected_acc = Account.search(selected)
         return selected_acc
 
     @classmethod
@@ -82,30 +83,87 @@ class PasswordManager:
         print(f"Accounts for {selected_list.get_name()}:")
         for acc in selected_list:
             print("\t", acc)
-    
+
     @classmethod
-    def add_account(cls):
-        _website_name = input_string("Enter website name: ")
-        _website_url = input_string("Enter website URL: ")
-        _username = input_string("Enter username: ")
-        _password = input_string("Enter password (or leave blank to generate a random one): ")
-        _type = y_or_n(prompt="Does your account have two-factor authentication enabled (yes/no)? ",
-                         error="Invalid input", ge='yes', gt='y', le='no', lt='n')
+    def new_list(cls):
+        while True:
+            name = input_string("Please enter the name for the new list: ")
+            try:
+                the_list = AccountList.lookup(name)
+                if the_list is not None:
+                    print(f"Error! List {name} already exists")
+                    continue
+            except KeyError:
+                pass
+            if name.lower() == "exit":
+                return
+            security = input_int("Enter security level for the new list (1-10)", le=1, ge=10)
+            the_list = AccountList(name, security, [])
+            cls.__all_lists.append(the_list)
+            print(f"New list {name} was added!")
+            return
 
-        if _password == "" or not _type:
-            account = acc(name=_website_name, url=_website_url, username=_username, _type=_type)
-            cls.__all_accounts.append(account)
+    @classmethod
+    def delete_list(cls):
+        selected_list = cls.select_list_genre()
+        if selected_list is None:
+            return
+        if selected_list.get_name() == AccountList.ALL_ACCOUNTS:
+            print(f"Error! Cannot delete the {AccountList.ALL_ACCOUNTS} list!")
+        if selected_list not in cls.__all_lists:
+            print(f"Error! Account List {selected_list.get_name()} does not exist!")
+            return
+        cls.__all_lists.remove(selected_list)
+
+    @classmethod
+    def new_account(cls):
+        has_account = y_or_n("Do you have an account with us (y/no?")
+        if has_account:
+            name = input_string("What is the name of the website: ")
+            exists = check_site_exist(name)
+            if exists:
+                return
+            has_security = y_or_n("Does your account have two-factor authentication enabled (yes/no)? ")
+            if has_security:
+                # call enumerate type of auth
+                cls.create_account(two_factor_auth=True)
+            else:
+                cls.create_account()
         else:
-            two_auth_account = TwoFactorAuth(name=_website_name, url=_website_url, username=_username,
-                                           password=_password)
-            cls.__all_accounts.append(two_auth_account)
+            cls.create_new_account()
+            print("Account added successfully!")
 
-        print("Account added successfully!")
+    @classmethod
+    def create_new_account(cls):
+        cls.create_account()
 
+    @staticmethod
+    def create_account(two_factor_auth=False):
+        try:
+            name = input_string("What is the name of the website: ")
+            account = Account.search(name)
+            if account is not None:
+                print(f"Account {name} already exists!")
+                return
+            _url = input_string("Enter the url for the website: ")
+            _username = input_string("Enter username for the account: ")
+            _password = input_string("Enter password for the account: ")
+            if two_factor_auth:
+                selected_val = select_item("Enter authentication method (phone, pin, or secret question): ", map=TwoFactorAuth.AUTH, choices=TwoFactorAuth.AUTH_VAL)
+                TwoFactorAuth.choice_mapping(selected_val)
 
+                # Create account with 2FA logic
+                TwoFactorAuth(name, _url, _username, _password, _info=selected_val, last_changed=datetime.now())
+            else:
+                # Create account logic
+                Account(name, _url, _username, _password, last_changed=datetime.now())
+        except KeyError:
+            print("An error occurred while searching for the account.")
+
+# _________________________________________________________________________________
     @classmethod
     def change_password(cls, selected_val):
-        temp = y_or_n(prompt="Continue to permanently change your password (y/n)?", error="Invalid symbols. please try again.")
+        temp = y_or_n("Continue to permanently change your password (y/n)?")
         if not temp:
             return
 
@@ -122,7 +180,6 @@ class PasswordManager:
             cls.display_menu()
             choice = select_item(prompt="Please select an option: ", error="Please select only one of the items above!",
                                  choices=cls.CHOICES)
-
             match choice:
                 case "q":
                     break
