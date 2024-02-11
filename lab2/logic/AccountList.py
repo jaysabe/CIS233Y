@@ -5,13 +5,13 @@ class AccountList:
     ALL_ACCOUNTS = "All Accounts"
     
     def __init__(self, title, security_level, accounts):
-        self.__name = title
+        self.__title = title
         self.__security_level = security_level
         self.__accounts = accounts
-        self.__class__.__map[title.tolower()] = self
+        self.__class__.__map[title.lower()] = self
 
     def __str__(self):
-        return f"<Category: {self.__name}>"
+        return f"<Category: {self.__title}>"
 
     def __iter__(self):
         return self.__accounts.__iter__()
@@ -52,12 +52,14 @@ class AccountList:
 
     @classmethod
     def lookup(cls, title):
-        return cls.__map[title.tolower()]
+        return cls.__map[title.lower()]
 
     @staticmethod
     def read_data():
         from data.Database import Database
-
+        # all_accounts, all_lists = Database.read_data()
+        # print("All accounts:", all_accounts)
+        # print("All lists:", all_lists)
         return Database.read_data()
 
             

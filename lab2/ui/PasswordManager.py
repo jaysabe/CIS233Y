@@ -31,11 +31,14 @@ class PasswordManager:
 
     @classmethod
     def init(cls):
-        cls.__all_accounts, cls.__all_account_lists = AccountList.read_data()
+        print("Initializing...")
+        cls.__all_accounts, cls.__all_lists = AccountList.read_data()
+        print("Initialization complete.")
 
     @classmethod
     def print_accounts(cls):
         for acc in cls.__all_accounts:
+            print()
             print(acc)
 
     @classmethod
@@ -45,7 +48,7 @@ class PasswordManager:
 
     @classmethod
     def select_list_genre(cls):
-        titles = [acc_list.get_name() for acc_list in cls.__all_lists] + ["exit"]
+        titles = [acc_list.get_title() for acc_list in cls.__all_lists] + ["exit"]
         prompt_str = "Current List of account genres: "
         for title in titles:
             prompt_str += "\n\t" + title
@@ -179,6 +182,7 @@ class PasswordManager:
         if the_list.get_name() == AccountList.ALL_ACCOUNTS:
             print("You can't remove an account from All Accounts!")
             return
+        # website and url
         account = cls.select_account(the_list)
         if account is None:
             return
@@ -241,3 +245,8 @@ class PasswordManager:
                     cls.join_lists()
 
         print("Entering sleep...")
+
+
+if __name__ == '__main__':
+    PasswordManager.init()
+    PasswordManager.run()
