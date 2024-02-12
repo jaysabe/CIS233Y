@@ -18,12 +18,12 @@ class PasswordManager:
         print("Options for the account manager:")
         print("  p: Print the accounts.")
         print("  l: Print the list of accounts.")
-        print("  s: Print the account for a selected category.")
-        print("  a: Add a new category.")
-        print("  d: Delete a category.")
+        print("  s: Print the account for a selected list.")
+        print("  a: Add a new List genre.")
+        print("  d: Delete a list genre.")
         print("  m: Make a new account.")
-        print("  i: Insert account into category.")
-        print("  r: Remove an account from a category.")
+        print("  i: Insert account into a list.")
+        print("  r: Remove an account from a list.")
         print("  u: Update password for an account.")
         print("  j: Join two account lists together.")
         print("  q: Exit the program.")
@@ -31,9 +31,7 @@ class PasswordManager:
 
     @classmethod
     def init(cls):
-        print("Initializing...")
         cls.__all_accounts, cls.__all_lists = AccountList.read_data()
-        print("Initialization complete.")
 
     @classmethod
     def print_accounts(cls):
@@ -49,11 +47,11 @@ class PasswordManager:
     @classmethod
     def select_list_genre(cls):
         titles = [acc_list.get_title() for acc_list in cls.__all_lists] + ["exit"]
-        prompt_str = "Current List of account genres: "
+        prompt_str = "Credential Genres: "
         for title in titles:
             prompt_str += "\n\t" + title
-        prompt_str += "\nPlease select an item from the list: "
-        selected = select_item(prompt=prompt_str, error="Please select only an item from this list!",
+        prompt_str += "\nPlease select genre from the list: "
+        selected = select_item(prompt=prompt_str, error="Please select only a genre from this list!",
                                    choices=titles)
         if selected == "exit":
             return None
@@ -83,27 +81,27 @@ class PasswordManager:
         selected_list = cls.select_list_genre()
         if selected_list is None:
             return
-        print(f"Accounts for {selected_list.get_name()}:")
+        print(f"Accounts for {selected_list.get_title()}:")
         for acc in selected_list:
             print("\t", acc)
 
     @classmethod
     def new_list(cls):
         while True:
-            name = input_string("Please enter the name for the new list: ")
+            title = input_string("Please enter the name for the new list: ")
             try:
-                the_list = AccountList.lookup(name)
+                the_list = AccountList.lookup(title)
                 if the_list is not None:
-                    print(f"Error! List {name} already exists")
+                    print(f"Error! List {title} already exists")
                     continue
             except KeyError:
                 pass
-            if name.lower() == "exit":
+            if title.lower() == "exit":
                 return
-            security = input_int("Enter security level for the new list (1-10)", le=1, ge=10)
-            the_list = AccountList(name, security, [])
+            security = input_int("Enter security level for the new list (1-10): ", le=10, ge=1)
+            the_list = AccountList(title, security, [])
             cls.__all_lists.append(the_list)
-            print(f"New list {name} was added!")
+            print(f"New list \"{title}\" was added!")
             return
 
     @classmethod
@@ -111,10 +109,10 @@ class PasswordManager:
         selected_list = cls.select_list_genre()
         if selected_list is None:
             return
-        if selected_list.get_name() == AccountList.ALL_ACCOUNTS:
+        if selected_list.get_title() == AccountList.ALL_ACCOUNTS:
             print(f"Error! Cannot delete the {AccountList.ALL_ACCOUNTS} list!")
         if selected_list not in cls.__all_lists:
-            print(f"Error! Account List {selected_list.get_name()} does not exist!")
+            print(f"Error! Account List {selected_list.get_title()} does not exist!")
             return
         cls.__all_lists.remove(selected_list)
 
@@ -172,14 +170,17 @@ class PasswordManager:
         if account is None:
             return
         if account in the_list:
-            print(f"Account connected to {account.get_url()} is already in List {the_list.get_name()}!")
+            print(f"Account connected to {account.get_url()} is already in List {the_list.get_title()}!")
+            return
+        the_list.add(account)
+
 
     @classmethod
     def remove_acc_from_list(cls):
         the_list = cls.select_list_genre()
         if the_list is None:
             return
-        if the_list.get_name() == AccountList.ALL_ACCOUNTS:
+        if the_list.get_title() == AccountList.ALL_ACCOUNTS:
             print("You can't remove an account from All Accounts!")
             return
         # website and url
@@ -197,7 +198,6 @@ class PasswordManager:
         account = cls.select_account()
         if account is None:
             return
-
         new_password = input_string("Enter the new password: ")
         account.change_password(new_password)
 
@@ -205,13 +205,17 @@ class PasswordManager:
     def join_lists(cls):
         list1 = cls.select_list_genre()
         list2 = cls.select_list_genre()
-        if list1 or list2 is None:
+        print(list1, list2)
+        if list1 is None or list2 is None:
             return
         try:
+            print(list1, list2)
             new_list = list1 + list2
+            new_list_title = input_string("What is the name of this new list? ")
         except Exception as e:
             print(e)
             return
+        new_list.set_title(new_list_title)
         cls.__all_lists.append(new_list)
 
     @classmethod

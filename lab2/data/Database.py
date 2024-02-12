@@ -3,6 +3,7 @@ from logic.TwoFactorAccount import TwoFactorAuth
 from logic.AccountList import AccountList
 from datetime import datetime
 
+
 class Database:
     @staticmethod
     def read_data():

@@ -23,7 +23,10 @@ class AccountList:
         return self.__title
 
     def get_level(self):
-        return self.__security_level
+        return int(self.__security_level)
+
+    def set_title(self, new_title):
+        self.__title = new_title
 
     def add(self, account):
         self.__accounts.append(account)
@@ -36,17 +39,17 @@ class AccountList:
         try:
             new_list = AccountList.lookup(new_title)
         except:
-            new_title = None
-        if new_title is not None:
-            raise Exception(f"Error! List {new_title} already exists!")
-        average = (self.get_level() + other.get_level()) / 2
-        average = max(self.get_level(), other.get_level())
-        new_list = AccountList(new_title, average, [])
+            new_list = None
+            if new_list is not None:
+                raise Exception(f"Error! List {new_title} already exists!")
+        average = (self.get_level() + other.get_level()) / 2  # Calculate average level
+        new_list = AccountList(new_title, average,[])
+
         for account in self:
             if account not in new_list:
                 new_list.add(account)
         for account in other:
-            if account not in other:
+            if account not in new_list:
                 new_list.add(account)
         return new_list
 
