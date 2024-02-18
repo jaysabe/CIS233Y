@@ -18,7 +18,10 @@ class Account:
         self.__username = username
         self.__password = password
         self.__last_changed = last_changed
-        Account.__map[login_url.lower()] = self  # Add account to the map
+        Account.__map[self.get_key()] = self  # Add account to the map
+
+    def get_key(self):
+        return self.__login_url.lower()
 
     def get_url(self):
         return self.__login_url

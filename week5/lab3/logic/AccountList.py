@@ -66,4 +66,12 @@ class AccountList:
         # print("All lists:", all_lists)
         return Database.read_data()
 
+    def to_dict(self):
+        return {
+            "name": self.__title,
+            "security level": self.__security_level,
+            "accounts": [account.get_key() for account in self.__accounts]
+
+        }
+
             
