@@ -42,6 +42,7 @@ class AccountList:
             new_list = None
             if new_list is not None:
                 raise Exception(f"Error! List {new_title} already exists!")
+
         average = (self.get_level() + other.get_level()) / 2  # Calculate average level
         new_list = AccountList(new_title, average,[])
 
