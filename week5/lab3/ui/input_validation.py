@@ -1,22 +1,24 @@
 # validate input functions here
 from logic.Account import Account
 
+
 def valid_pin_number(n):
     return len(n) == 4 and n[0:3].isdigit()
 
 
 def input_range(value, gt, ge, lt, le):
-    if gt is not None and value < gt:
-        print(f"Value must be greater than {gt}!")
+    print(value, ":", gt, ge, lt, le)
+    if ge is not None and value < ge:
+        print(f"Value must be greater than {ge}!")
         return False
-    if ge is not None and value <= ge:
-        print(f"Value must be greater than or equal to {ge}!")
+    if gt is not None and value <= gt:
+        print(f"Value must be greater than or equal to {gt}!")
         return False
-    if lt is not None and value > lt:
-        print(f"Value must be less than {lt}!{fail}")
+    if le is not None and value > le:
+        print(f"Value must be less than {le}!")
         return False
-    if le is not None and value >= le:
-        print(f"Value must be less than or equal to {le}!")
+    if lt is not None and value >= lt:
+        print(f"Value must be less than or equal to {lt}!")
         return False
     return True
 
@@ -34,6 +36,10 @@ def input_int(prompt="Please enter a whole number: ", error="Invalid input. Plea
             print(error)
 
 
+def is_not_empty(s):
+    return len(s) > 0
+
+
 def input_float(prompt="Please enter a decimal: ", error="Invalid input. Please enter a floating value.",
               ge=None, gt=None, le=None, lt=None):
     while True:
@@ -49,10 +55,12 @@ def input_float(prompt="Please enter a decimal: ", error="Invalid input. Please 
 
 def input_string(prompt="Please enter your item name: ", error="Invalid input. Please enter valid text.", valid=lambda x: len(x) > 0):
     while True:
-        val = input(prompt)
-        if valid is not None and valid(val):
-            return val
-        else:
+        try:
+            val = input(prompt)
+            if valid(val):
+                return val
+            print(error)
+        except ValueError:
             print(error)
 
 
@@ -68,44 +76,40 @@ def y_or_n(prompt="Please answer with yes or no: ", error="Invalid input. Please
 
 
 def select_item(prompt="Please set a default statement here", error="Invalid input. Please try again.", choices=["Yes", "No"], map=None):
-    _dict = {}
-
+    value_dict = {}
     for choice in choices:
-        _dict[choice.lower()] = choice
+        value_dict[choice.lower()] = choice
     if map is not None:
         for key in map:
-            _dict[key.lower()] = map[key]
-
+            value_dict[key.lower()] = map[key]
     while True:
-        user_input = input(prompt).lower()
-
-        if user_input in _dict:
-            return _dict[user_input]
-        else:
-            print(error)
+        val = input(prompt).lower()
+        if val in value_dict:
+            return value_dict[val]
+        print(error)
 
 
-def input_val(_type="int", *args, **kwargs):
+def input_val(type="int", *args, **kwargs):
     # interface:
-    if _type == "int":
+    if type == "int":
         return input_int(*args, **kwargs)
-    elif _type == "str":
+    elif type == "str":
         return input_string(*args, **kwargs)
-    elif _type == "float":
+    elif type == "float":
         return input_float(*args, **kwargs)
-    elif _type == "bool":
+    elif type == "bool":
         return y_or_n(*args, **kwargs)
-    elif _type == "choice":
+    elif type == "choice":
         return select_item(*args, **kwargs)
     else:
-        print("Type was not properly set", _type)
+        print("Error! Unknown type:", type)
 
 
 def check_site_exist(name):
     try:
         site = Account.search(name)
         if site is not None:
-            print(f"Site {name} already exists!")
+            print(f"A {site} account has been found. No duplicates. Returning to main menu. . .")
             return True
         else:
             return False
